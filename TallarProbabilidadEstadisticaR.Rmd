@@ -1,0 +1,32 @@
+---
+title: "TallerRProbabilidadEstadistica"
+author: "Jose Manuel Rodriguez"
+date: "2024-05-11"
+output: html_document
+---
+
+
+```{r}
+getwd()
+```
+
+```{r}
+# Instalar el paquete readr si aún no está instalado
+if (!requireNamespace("readr", quietly = TRUE)) {
+    install.packages("readr")
+}
+if (!requireNamespace("dplyr", quietly = TRUE)) {
+    install.packages("dplyr")
+}
+
+# Leer el archivo CSV usando readr
+library(readr)
+library(dplyr)
+
+# Usar la ruta completa del archivo
+Datos_Banco <- read_csv("C:/Users/Jose/Documents/TallerRProbabilidadEstadistica/Datos_banco.csv")
+
+
+Datos_Banco %>% glimpse()
+```
+
