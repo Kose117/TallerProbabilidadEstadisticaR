@@ -283,7 +283,9 @@ print(paste("La moda de la edad es:", moda_edad))
 
 # 3.
 
-## a.
+# 4.
+
+## a. La mayoría de las personas casadas en la base de datos tienen ocupación informal.
 
 ```{r}
 resultado_a <- Datos_Banco %>%
@@ -295,42 +297,32 @@ resultado_a <- Datos_Banco %>%
 print(resultado_a)
 ```
 
-## b.
+De los datos, la categoría con la mayor cantidad de personas casadas es "Independiente", no "Informal". Por lo tanto, la afirmación es **falsa**. Aunque "Informal" es un grupo significativo, no constituye la mayoría en comparación con "Independiente".
+
+## b. Es más probable que un cliente acepte la tarjeta de crédito si se le contacta en abril que si se le contacta en marzo.
 
 ```{r}
-resultado_b <- Datos_Banco %>%
-  filter(Mes %in% c("marzo", "abril")) %>%
-  group_by(Mes, aceptacion_TC) %>%
-  summarise(Count = n(), .groups = 'drop') %>%
-  mutate(Total = sum(Count),
-         Proporcion = Count / Total)
+datos_marzo_abril <- Datos_Banco %>%
+  filter(Mes %in% c("marzo", "abril"))
 
-print(resultado_b)
+
+tasa_aceptacion <- datos_marzo_abril %>%
+  group_by(Mes) %>%
+  summarise(Tasa_Aceptacion = mean(aceptacion_TC == "si", na.rm = TRUE))
+
+
+print(tasa_aceptacion)
 ```
 
-## c.
+De acuerdo con los datos analizados, la tasa de aceptación para los clientes contactados en marzo es del 51%, mientras que para aquellos contactados en abril es del 28%. Esto indica que, contrariamente a la afirmación, es más probable que un cliente acepte la tarjeta de crédito si se le contacta en marzo en lugar de abril. Por lo tanto, la afirmación es **falsa**.
+
+## c. La cantidad de meses del último o del actual contrato de trabajo tiene un comportamiento simétrico independientemente de si el cliente aceptó o no la tarjeta de crédito.
 
 ```{r}
-library(e1071)
-
-resultado_c <- Datos_Banco %>%
-  group_by(aceptacion_TC) %>%
-  summarise(Skewness = skewness(contrato_meses))
-
-print(resultado_c)
-
-
-library(ggplot2)
-Datos_Banco %>%
-  ggplot(aes(x = contrato_meses)) +
-  geom_histogram(bins = 30, fill = "blue", color = "black") +
-  facet_wrap(~aceptacion_TC) +
-  theme_minimal() +
-  ggtitle("Distribución de Meses de Contrato por Aceptación de Tarjeta")
 
 ```
 
-## d.
+## d. La edad promedio de las personas en la base de datos cuyo nivel educativo es bachillerato supera los 35 años.
 
 ```{r}
 resultado_d <- Datos_Banco %>%
@@ -341,4 +333,4 @@ print(resultado_d)
 
 ```
 
-# 4.
+# 5.
