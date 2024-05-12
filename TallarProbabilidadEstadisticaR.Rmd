@@ -5,28 +5,176 @@ date: "2024-05-11"
 output: html_document
 ---
 
+# Definición de variables
+
+1\. Edad. Edad en años del cliente.
+
+2\. Ocupación. Ocupación del cliente.
+
+3\. Est_civil. Estado civil del cliente.
+
+4\. Nivel_educativo. Máximo nivel escolar alcanzado por el cliente.
+
+5\. Contrato_meses. Duración del último o actual contrato de trabajo del cliente.
+
+6\. Cred_hipotecario. Si el cliente tiene o no crédito hipotecario vigente con el banco.
+
+7\. Cred_personal. Si el cliente tiene o no crédito personal vigente con el banco.
+
+8\. Medio_contacto. Medio por el cual se contactó al cliente.
+
+9\. Día. Día del mes en el que se realizó el último contacto con el cliente.
+
+10\. Mes. Mes del año en el que se realizó el último contacto con el cliente.
+
+11\. Duración_seg. Duración en segundos del último contacto con el cliente.
+
+12\. Aceptación_TC. Si el cliente aceptó o no la tarjeta de crédito en la campaña mencionada
+
+# Descarga librerías y dependencias
 
 ```{r}
-getwd()
-```
-
-```{r}
-# Instalar el paquete readr si aún no está instalado
 if (!requireNamespace("readr", quietly = TRUE)) {
     install.packages("readr")
 }
+
+
 if (!requireNamespace("dplyr", quietly = TRUE)) {
     install.packages("dplyr")
 }
 
-# Leer el archivo CSV usando readr
-library(readr)
+if (!requireNamespace("psych", quietly = TRUE)) {
+    install.packages("psych")
+}
+
+if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    install.packages("ggplot2")
+}
+
+library(ggplot2)
+
+library(psych)
+
 library(dplyr)
 
-# Usar la ruta completa del archivo
-Datos_Banco <- read_csv("C:/Users/Jose/Documents/TallerRProbabilidadEstadistica/Datos_banco.csv")
+library(readr)
+```
+
+# Abrir CSV
+
+```{r}
+current_directory <- getwd()
+
+
+file_path <- file.path(current_directory, "Datos_banco.csv")
+
+
+Datos_Banco <- read_csv(file_path)
 
 
 Datos_Banco %>% glimpse()
 ```
 
+# 1.
+
+1.  **Edad: Escalar Discreta**
+
+    -   La edad se clasifica como escalar discreta porque se mide en unidades completas (años) que no admiten fracciones en este contexto.
+
+2.  **Ocupación: Cualitativa Nominal**
+
+    -   Ocupación es una variable cualitativa nominal porque categoriza a las personas en grupos sin ningún orden inherente, como empleado, informal, desempleado, o independiente. Además, estas categorías son etiquetas sin un valor numérico asociado.
+
+3.  **Estado Civil: Cualitativa Nominal**
+
+    -   El estado civil es cualitativo nominal porque clasifica a las personas en categorías como casado, soltero o divorciado, las cuales no implican ningún orden o jerarquía.
+
+4.  **Nivel Educativo: Cualitativa Ordinal**
+
+    -   Nivel educativo es una variable cualitativa ordinal porque, aunque las categorías (como primaria, bachillerato, universitaria) son cualitativas, existe un orden implícito en el que cada nivel es considerado superior o más avanzado que el anterior.
+
+5.  **Contrato Meses: Escalar Discreta**
+
+    -   Se clasifica como escalar discreta porque representa la duración de un contrato en meses (enteros).
+
+6.  **Crédito Hipotecario: Cualitativa Nominal**
+
+    -   Es cualitativa nominal porque simplemente indica si una persona tiene o no un crédito hipotecario, clasificando a los individuos en dos grupos sin ningún orden: 'sí' o 'no'.
+
+7.  **Crédito Personal: Cualitativa Nominal**
+
+    -   Al igual que el crédito hipotecario, es una variable cualitativa nominal que indica si se tiene o no un crédito personal, sin implicar un orden.
+
+8.  **Medio de Contacto: Cualitativa Nominal**
+
+    -   Es cualitativa nominal porque se clasifica el medio por el cual se contactó al cliente (celular o chat), sin ningún orden jerárquico entre las categorías.
+
+9.  **Día: Escalar Discreta**
+
+    -   Día del mes es una variable escalar discreta porque aunque conceptualmente el tiempo es continuo, el día se cuenta en unidades enteras (del 1 al 31) sin fracciones.
+
+10. **Mes: Cualitativa Ordinal**
+
+    -   Mes es considerada una variable cualitativa ordinal porque los meses del año tienen un orden cronológico natural (enero a diciembre), pero son representados por nombres, no por sus valores numéricos.
+
+11. **Duración en Segundos: Escalar Discreta**
+
+    -   Aunque el tiempo puede ser medido de forma continua, en este caso, la duración en segundos se cuenta en unidades enteras (segundos), y se desprecian los milisegundos.
+
+12. **Aceptación de Tarjeta de Crédito: Cualitativa Nominal**
+
+    -   Es cualitativa nominal porque simplemente indica si aceptaron o no una tarjeta de crédito, sin ningún orden entre las opciones.
+
+# 2.
+
+## Cálculo estadísticos descriptivos para las variables escalares
+
+```{r}
+
+variables_escalares <- Datos_Banco[, c("edad", "contrato_meses","Dia", "duracion_seg")]
+
+
+estadisticos_escalares <- describe(variables_escalares)
+print(estadisticos_escalares)
+
+```
+
+```{r}
+Datos_Banco %>%
+  ggplot(aes(x=edad)) +
+  geom_histogram(fill="green", color="black", bins=30) +
+  ggtitle("Histograma de edad") +
+  labs(x="Edad (años)", y="Frecuencia") +
+  theme_minimal()
+
+Datos_Banco %>%
+   ggplot(aes(x=contrato_meses)) +
+  geom_histogram(fill = "blue", color = "black", bins = 30) +
+  ggtitle("Histograma de Meses de Contrato") +
+  labs(x = "Meses de Contrato", y = "Frecuencia") +
+  theme_minimal()
+
+Datos_Banco %>%
+   ggplot(aes(x=Dia)) +
+  geom_histogram(fill = "red", color = "black", bins = 30) +
+  ggtitle("Histograma de Día") +
+  labs(x = "Día del Mes", y = "Frecuencia") +
+  theme_minimal()
+
+Datos_Banco %>%
+   ggplot(aes(x=duracion_seg)) +
+  geom_histogram(fill = "purple", color = "black", bins = 30) +
+  ggtitle("Histograma de Duración de la Llamada") +
+  labs(x = "Duración (segundos)", y = "Frecuencia") +
+  theme_minimal()
+```
+
+## Cálculo estadísticas entre los grupos de aceptación de tarjeta de crédito
+
+```{r}
+
+estadisticos_por_grupo <- describeBy(variables_escalares, group = Datos_Banco$aceptacion_TC)
+
+
+print(estadisticos_por_grupo)
+```
