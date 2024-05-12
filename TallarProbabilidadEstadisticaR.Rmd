@@ -51,6 +51,12 @@ if (!requireNamespace("ggplot2", quietly = TRUE)) {
     install.packages("ggplot2")
 }
 
+if (!requireNamespace("e1071", quietly = TRUE)) {
+    install.packages("e1071")
+}
+
+library(e1071)
+
 library(ggplot2)
 
 library(psych)
@@ -139,6 +145,18 @@ print(estadisticos_escalares)
 
 ```
 
+## Moda (edad)
+
+```{r}
+
+
+frecuencias_edad <- table(variables_escalares$edad)
+moda_edad <- as.numeric(names(frecuencias_edad)[which.max(frecuencias_edad)])
+print(paste("La moda de la edad es:", moda_edad))
+```
+
+## Histograma
+
 ```{r}
 Datos_Banco %>%
   ggplot(aes(x=edad)) +
@@ -171,10 +189,156 @@ Datos_Banco %>%
 
 ## Cálculo estadísticas entre los grupos de aceptación de tarjeta de crédito
 
+estadisticos_por_grupo \<- describeBy(variables_escalares, group = Datos_Banco\$aceptacion_TC)
+
+print(estadisticos_por_grupo)
+
 ```{r}
 
 estadisticos_por_grupo <- describeBy(variables_escalares, group = Datos_Banco$aceptacion_TC)
 
 
 print(estadisticos_por_grupo)
+
+
 ```
+
+## Aceptaron la tarjeta de crédito (Histograma) y moda (edad)
+
+```{r}
+datos_aceptaron <- Datos_Banco %>% filter(aceptacion_TC == "si")
+
+datos_aceptaron %>%
+  ggplot(aes(x=edad)) +
+  geom_histogram(fill="green", color="black", bins=30) +
+  ggtitle("Histograma de edad") +
+  labs(x="Edad (años)", y="Frecuencia") +
+  theme_minimal()
+
+datos_aceptaron %>%
+   ggplot(aes(x=contrato_meses)) +
+  geom_histogram(fill = "blue", color = "black", bins = 30) +
+  ggtitle("Histograma de Meses de Contrato") +
+  labs(x = "Meses de Contrato", y = "Frecuencia") +
+  theme_minimal()
+
+datos_aceptaron %>%
+   ggplot(aes(x=Dia)) +
+  geom_histogram(fill = "red", color = "black", bins = 30) +
+  ggtitle("Histograma de Día") +
+  labs(x = "Día del Mes", y = "Frecuencia") +
+  theme_minimal()
+
+datos_aceptaron %>%
+   ggplot(aes(x=duracion_seg)) +
+  geom_histogram(fill = "purple", color = "black", bins = 30) +
+  ggtitle("Histograma de Duración de la Llamada") +
+  labs(x = "Duración (segundos)", y = "Frecuencia") +
+  theme_minimal()
+
+frecuencias_edad <- table(datos_aceptaron$edad)
+moda_edad <- as.numeric(names(frecuencias_edad)[which.max(frecuencias_edad)])
+print(paste("La moda de la edad es:", moda_edad))
+```
+
+## No aceptaron la tarjeta de crédito (Histograma) y moda(edad)
+
+```{r}
+datos_no_aceptaron <- Datos_Banco %>% filter(aceptacion_TC == "no")
+
+datos_no_aceptaron %>%
+  ggplot(aes(x=edad)) +
+  geom_histogram(fill="green", color="black", bins=30) +
+  ggtitle("Histograma de edad") +
+  labs(x="Edad (años)", y="Frecuencia") +
+  theme_minimal()
+
+datos_no_aceptaron %>%
+   ggplot(aes(x=contrato_meses)) +
+  geom_histogram(fill = "blue", color = "black", bins = 30) +
+  ggtitle("Histograma de Meses de Contrato") +
+  labs(x = "Meses de Contrato", y = "Frecuencia") +
+  theme_minimal()
+
+datos_no_aceptaron %>%
+   ggplot(aes(x=Dia)) +
+  geom_histogram(fill = "red", color = "black", bins = 30) +
+  ggtitle("Histograma de Día") +
+  labs(x = "Día del Mes", y = "Frecuencia") +
+  theme_minimal()
+
+datos_no_aceptaron %>%
+   ggplot(aes(x=duracion_seg)) +
+  geom_histogram(fill = "purple", color = "black", bins = 30) +
+  ggtitle("Histograma de Duración de la Llamada") +
+  labs(x = "Duración (segundos)", y = "Frecuencia") +
+  theme_minimal()
+
+frecuencias_edad <- table(datos_no_aceptaron$edad)
+moda_edad <- as.numeric(names(frecuencias_edad)[which.max(frecuencias_edad)])
+print(paste("La moda de la edad es:", moda_edad))
+```
+
+## HACE FALTA TODO EL ANALISIS
+
+# 3.
+
+## a.
+
+```{r}
+resultado_a <- Datos_Banco %>%
+  filter(est_civil == "casado") %>%
+  group_by(ocupacion) %>%
+  summarise(Count = n()) %>%
+  arrange(desc(Count))
+
+print(resultado_a)
+```
+
+## b.
+
+```{r}
+resultado_b <- Datos_Banco %>%
+  filter(Mes %in% c("marzo", "abril")) %>%
+  group_by(Mes, aceptacion_TC) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  mutate(Total = sum(Count),
+         Proporcion = Count / Total)
+
+print(resultado_b)
+```
+
+## c.
+
+```{r}
+library(e1071)
+
+resultado_c <- Datos_Banco %>%
+  group_by(aceptacion_TC) %>%
+  summarise(Skewness = skewness(contrato_meses))
+
+print(resultado_c)
+
+
+library(ggplot2)
+Datos_Banco %>%
+  ggplot(aes(x = contrato_meses)) +
+  geom_histogram(bins = 30, fill = "blue", color = "black") +
+  facet_wrap(~aceptacion_TC) +
+  theme_minimal() +
+  ggtitle("Distribución de Meses de Contrato por Aceptación de Tarjeta")
+
+```
+
+## d.
+
+```{r}
+resultado_d <- Datos_Banco %>%
+  filter(nivel_educativo == "bachillerato") %>%
+  summarise(Promedio_Edad = mean(edad, na.rm = TRUE))
+
+print(resultado_d)
+
+```
+
+# 4.
