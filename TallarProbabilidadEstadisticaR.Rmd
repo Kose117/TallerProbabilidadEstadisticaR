@@ -320,7 +320,30 @@ De acuerdo con los datos analizados, la tasa de aceptación para los clientes co
 
 ```{r}
 
+datos_contrato <- Datos_Banco %>%
+  select(contrato_meses, aceptacion_TC) %>%
+  filter(!is.na(contrato_meses))  
+
+
+ggplot(datos_contrato, aes(x = contrato_meses, fill = aceptacion_TC)) +
+  geom_histogram(position = "dodge", binwidth = 1) +
+  labs(title = "Distribución de la duración del contrato por aceptación de tarjeta de crédito",
+       x = "Duración del contrato (meses)",
+       y = "Frecuencia") +
+  theme_minimal()
+
+# Calcular estadísticas descriptivas para cada grupo
+estadisticas_contrato <- datos_contrato %>%
+  group_by(aceptacion_TC) %>%
+  summarise(Media = mean(contrato_meses, na.rm = TRUE),
+            Desviacion_Estandar = sd(contrato_meses, na.rm = TRUE),
+            Mediana = median(contrato_meses, na.rm = TRUE),
+            IQR = IQR(contrato_meses, na.rm = TRUE))
+
+print(estadisticas_contrato)
 ```
+
+### NO ESTOY SEGURO DE ESTE
 
 ## d. La edad promedio de las personas en la base de datos cuyo nivel educativo es bachillerato supera los 35 años.
 
@@ -333,4 +356,30 @@ print(resultado_d)
 
 ```
 
+Según el análisis realizado en los datos, la edad promedio de las personas con nivel educativo de bachillerato en la base de datos es de aproximadamente 40.06 años. Por lo que la afirmación es verdadera.
+
 # 5.
+
+# 6.
+
+```{r}
+ggplot(Datos_Banco, aes(x = edad, y = duracion_seg)) +
+  geom_point(alpha = 0.5) +  # Puntos semitransparentes para ver la densidad
+  labs(title = "",
+       x = "Edad (años)",
+       y = "Duración del contacto (segundos)") +
+  theme_minimal()
+
+
+correlacion <- cor(Datos_Banco$edad, Datos_Banco$duracion_seg, use = "complete.obs") 
+
+
+cat("Coeficiente de correlación: ", correlacion, "\n")
+
+```
+
+**1. Diagrama de dispersión:**
+El gráfico generado muestra una dispersión amplia de los puntos, sin patrones claros que indiquen una relación lineal entre la edad del cliente y la duración del contacto en segundos. La distribución de los puntos no muestra ninguna tendencia ascendente o descendente clara, lo cual sugiere que no hay una relación lineal fuerte entre estas dos variables.
+
+**2. Coeficiente de correlación de Pearson:**
+El coeficiente calculado es \|-0.00236689\|, lo cual es un valor menor a 0.5, que indica que no existe una correlación lineal significativa entre la edad de los clientes y la duración de sus contactos. Este resultado cuantitativo respalda la observación visual del gráfico de dispersión.
